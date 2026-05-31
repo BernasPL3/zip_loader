@@ -1,30 +1,28 @@
-TARGET      := zip_loader
-BUILD       := build
-SOURCE      := source
+TARGET := zip_loader
+BUILD  := build
+SRC    := source
 
-SOURCES     := $(wildcard $(SOURCE)/*.c)
-OBJECTS     := $(SOURCES:$(SOURCE)/%.c=$(BUILD)/%.o)
+CFILES := $(wildcard $(SRC)/*.c)
+OFILES := $(CFILES:$(SRC)/%.c=$(BUILD)/%.o)
 
-CFLAGS      := -O2 -Wall -mword-relocations -ffunction-sections -fdata-sections
-CFLAGS      += -I$(DEVKITPRO)/libctru/include
+INCLUDE := -I$(DEVKITPRO)/libctru/include
+LIBS    := -lctru -lm
 
-LDFLAGS     := -specs=3dsx.specs -g
-LIBS        := -lctru -lm
+CFLAGS  := -O2 -Wall $(INCLUDE)
+LDFLAGS := -specs=3dsx.specs
 
-CC          := arm-none-eabi-gcc
+CC      := arm-none-eabi-gcc
 
-OUTPUT      := $(TARGET).3dsx
-
-all: $(OUTPUT)
+all: $(TARGET).3dsx
 
 $(BUILD):
 	mkdir -p $(BUILD)
 
-$(BUILD)/%.o: $(SOURCE)/%.c | $(BUILD)
+$(BUILD)/%.o: $(SRC)/%.c | $(BUILD)
 	$(CC) $(CFLAGS) -c $< -o $@
 
-$(OUTPUT): $(OBJECTS)
-	$(CC) $(OBJECTS) $(LDFLAGS) $(LIBS) -o $@
+$(TARGET).3dsx: $(OFILES)
+	$(CC) $(OFILES) $(LDFLAGS) $(LIBS) -o $@
 
 clean:
-	rm -rf $(BUILD) $(OUTPUT)
+	rm -rf $(BUILD) $(TARGET).3dsx
