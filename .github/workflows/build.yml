@@ -1,4 +1,4 @@
-name: Build 3DS Homebrew
+name: Build 3DS Homebrew (Docker)
 
 on:
   push:
@@ -8,37 +8,24 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    container:
+      image: devkitpro/devkitarm
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install dependencies
+      - name: Install 3DS tools
         run: |
-          sudo apt update
-          sudo apt install -y wget git xz-utils build-essential
+          dkp-pacman -Sy
+          dkp-pacman -S --noconfirm 3ds-dev libctru
 
-      - name: Install devkitPro
-        run: |
-          wget https://apt.devkitpro.org/install-devkitpro-pacman
-          chmod +x install-devkitpro-pacman
-          sudo ./install-devkitpro-pacman
-
-      - name: Install 3DS toolchain
-        run: |
-          sudo dkp-pacman -Sy
-          sudo dkp-pacman -S --noconfirm 3ds-dev libctru
-
-      - name: Setup environment
-        run: |
-          echo "DEVKITPRO=/opt/devkitpro" >> $GITHUB_ENV
-          echo "DEVKITARM=/opt/devkitpro/devkitARM" >> $GITHUB_ENV
-
-      - name: Build project
+      - name: Build
         run: |
           make clean || true
           make
 
-      - name: Upload build
+      - name: Upload
         uses: actions/upload-artifact@v4
         with:
           name: 3ds-build
