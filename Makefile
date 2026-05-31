@@ -1,43 +1,19 @@
-# ----------------------------
-# Projeto 3DS - ZIP Loader
-# ----------------------------
-
 TARGET      := zip_loader
 BUILD       := build
 SOURCE      := source
-INCLUDES    := include
 
-# Toolchain do devkitPro
-DEVKITPRO   ?= $(DEVKITPRO)
-DEVKITARM   ?= $(DEVKITARM)
-
-CC          := arm-none-eabi-gcc
-CXX         := arm-none-eabi-g++
-
-ARCH        := -march=armv6k -mtune=mpcore -mfloat-abi=hard -mtp=soft
-
-CFLAGS      := -O2 -Wall -mword-relocations \
-               -ffunction-sections -fdata-sections \
-               $(ARCH) \
-               -I$(INCLUDES)
-
-CXXFLAGS    := $(CFLAGS) -fno-rtti -fno-exceptions
-
-LDFLAGS     := -specs=3dsx.specs -g $(ARCH) \
-               -Wl,--gc-sections
-
-LIBS        := -lctru -lm
-
-# Arquivos fonte
 SOURCES     := $(wildcard $(SOURCE)/*.c)
 OBJECTS     := $(SOURCES:$(SOURCE)/%.c=$(BUILD)/%.o)
 
-# Output
-OUTPUT      := $(TARGET).3dsx
+CFLAGS      := -O2 -Wall -mword-relocations -ffunction-sections -fdata-sections
+CFLAGS      += -I$(DEVKITPRO)/libctru/include
 
-# ----------------------------
-# Regras
-# ----------------------------
+LDFLAGS     := -specs=3dsx.specs -g
+LIBS        := -lctru -lm
+
+CC          := arm-none-eabi-gcc
+
+OUTPUT      := $(TARGET).3dsx
 
 all: $(OUTPUT)
 
@@ -52,6 +28,3 @@ $(OUTPUT): $(OBJECTS)
 
 clean:
 	rm -rf $(BUILD) $(OUTPUT)
-
-run: all
-	citra $(OUTPUT) || true
