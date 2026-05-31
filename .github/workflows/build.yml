@@ -1,4 +1,4 @@
-name: Build 3DS Homebrew (Docker)
+name: Build 3DS Homebrew
 
 on:
   push:
@@ -9,13 +9,13 @@ jobs:
     runs-on: ubuntu-latest
 
     container:
-      image: devkitpro/devkitarm
+      image: devkitpro/devkitarm:latest
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install 3DS tools
+      - name: Install 3DS libs
         run: |
           dkp-pacman -Sy
           dkp-pacman -S --noconfirm 3ds-dev libctru
