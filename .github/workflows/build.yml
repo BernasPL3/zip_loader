@@ -15,7 +15,7 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt update
-          sudo apt install -y wget git xz-utils
+          sudo apt install -y wget git xz-utils build-essential
 
       - name: Install devkitPro
         run: |
@@ -25,7 +25,8 @@ jobs:
 
       - name: Install 3DS toolchain
         run: |
-          sudo dkp-pacman -S --noconfirm 3ds-dev
+          sudo dkp-pacman -Sy
+          sudo dkp-pacman -S --noconfirm 3ds-dev libctru
 
       - name: Setup environment
         run: |
@@ -34,10 +35,10 @@ jobs:
 
       - name: Build project
         run: |
-          make clean
+          make clean || true
           make
 
-      - name: Upload 3DSX
+      - name: Upload build
         uses: actions/upload-artifact@v4
         with:
           name: 3ds-build
